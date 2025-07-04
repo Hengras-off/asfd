@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - Watch Movies, TV Series & More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a6a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6a6a8a;
+        }
+        
+        /* Hero section gradient */
+        .hero-gradient {
+            background: linear-gradient(to right, rgba(21, 21, 38, 0.9) 0%, rgba(21, 21, 38, 0.7) 50%, rgba(21, 21, 38, 0.3) 100%);
+        }
+        
+        /* Card hover effect */
+        .content-card {
+            transition: all 0.3s ease;
+        }
+        .content-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        .content-card:hover .card-overlay {
+            opacity: 1;
+        }
+        .card-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Mobile menu animation */
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        .mobile-menu.hidden {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-gray-900 bg-opacity-90 backdrop-blur-sm z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <a href="#" class="text-2xl font-bold text-red-500 flex items-center">
+                    <i class="fas fa-play-circle mr-2"></i>
+                    StreamHub
+                </a>
+                <nav class="hidden lg:flex space-x-6">
+                    <a href="#" class="hover:text-red-400 transition">Home</a>
+                    <a href="#" class="hover:text-red-400 transition">Movies</a>
+                    <a href="#" class="hover:text-red-400 transition">TV Shows</a>
+                    <a href="#" class="hover:text-red-400 transition">Anime</a>
+                    <a href="#" class="hover:text-red-400 transition">Kids</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="Search..." class="bg-gray-800 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-red-500 w-64">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                <button class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full font-medium transition">
+                    Sign In
+                </button>
+                <button id="mobile-menu-button" class="lg:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-gray-800 z-50 p-4 overflow-y-auto hidden">
+        <div class="flex justify-between items-center mb-8">
+            <span class="text-xl font-bold text-red-500">StreamHub</span>
+            <button id="close-mobile-menu" class="text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mb-4">
+            <input type="text" placeholder="Search..." class="bg-gray-700 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-red-500 w-full">
+            <i class="fas fa-search absolute left-7 top-[4.5rem] text-gray-400"></i>
+        </div>
+        <nav class="flex flex-col space-y-4">
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">Home</a>
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">Movies</a>
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">TV Shows</a>
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">Anime</a>
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">Kids</a>
+            <a href="#" class="hover:text-red-400 transition py-2 border-b border-gray-700">My List</a>
+            <a href="#" class="hover:text-red-400 transition py-2">Settings</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen pt-16">
+        <div class="absolute inset-0 overflow-hidden">
+            <img src="https://image.tmdb.org/t/p/original/8Y43POKjjKDGI9MH89NW0NAzzp8.jpg" alt="Featured Movie" class="w-full h-full object-cover">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+            <div class="max-w-2xl">
+                <h1 class="text-5xl font-bold mb-4">The Last Adventure</h1>
+                <div class="flex items-center space-x-4 mb-6">
+                    <span class="bg-red-600 text-xs px-2 py-1 rounded">HD</span>
+                    <span class="text-gray-300">2023</span>
+                    <span class="text-gray-300">2h 18m</span>
+                    <span class="text-gray-300">Action, Adventure</span>
+                </div>
+                <p class="text-lg mb-8">A group of explorers must navigate treacherous jungles and ancient ruins to uncover a legendary treasure before it falls into the wrong hands.</p>
+                <div class="flex space-x-4">
+                    <button class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-medium flex items-center transition">
+                        <i class="fas fa-play mr-2"></i> Watch Now
+                    </button>
+                    <button class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-lg font-medium flex items-center transition">
+                        <i class="fas fa-plus mr-2"></i> My List
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="bg-gray-900 py-12">
+        <div class="container mx-auto px-4">
+            <!-- Trending Now -->
+            <section class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Trending Now</h2>
+                    <a href="#" class="text-sm text-gray-400 hover:text-red-400 transition">View All</a>
+                </div>
+                <div id="trending-movies" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <!-- Card 1 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Space Odyssey</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Sci-Fi</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/1XDDXPXGiI8id7MrUxK36ke7gkX.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Dark Shadows</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2022</span>
+                                <span class="mx-2">•</span>
+                                <span>Horror</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/9dKCd55IuTT5QRs989m9Qlb7d2B.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Laugh Factory</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Comedy</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Avengers Legacy</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Romantic Getaway</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Romance</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="Movie" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Mystery Island</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Mystery</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Popular TV Shows -->
+            <section class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Popular TV Shows</h2>
+                    <a href="#" class="text-sm text-gray-400 hover:text-red-400 transition">View All</a>
+                </div>
+                <div id="popular-tv" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <!-- Card 1 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6f9uCf7WQP1xU7UkJTxJOhz8iGs.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Stranger Worlds</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Sci-Fi</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/5DUMPBSnHOZsbBv81GFXZXvDGr6.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">The Crown Legacy</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Drama</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/9GvhICFMiRQA82vS6ydkXxeEkrd.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Breaking Point</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Crime</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6UH52Fmau8RPsMAbQbjwN3wJSCj.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Friends Forever</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Comedy</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/5zmi5z5phD1kiWgJ97k4xVeVj5O.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Dark Matter</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Sci-Fi</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg" alt="TV Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">The Last Kingdom</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>History</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Top Anime -->
+            <section class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Top Anime</h2>
+                    <a href="#" class="text-sm text-gray-400 hover:text-red-400 transition">View All</a>
+                </div>
+                <div id="top-anime" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <!-- Card 1 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/cvhNj9eoRBe5SxjCbQTkh05UP5K.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Demon Slayer</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/9dKCd55IuTT5QRs989m9Qlb7d2B.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Attack on Titan</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Jujutsu Kaisen</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">My Hero Academia</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">One Piece</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Adventure</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="Anime" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Naruto: Legacy</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Action</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Kids Section -->
+            <section class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">For Kids</h2>
+                    <a href="#" class="text-sm text-gray-400 hover:text-red-400 transition">View All</a>
+                </div>
+                <div id="kids-content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <!-- Card 1 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6UH52Fmau8RPsMAbQbjwN3wJSCj.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Paw Patrol</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Adventure</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/5zmi5z5phD1kiWgJ97k4xVeVj5O.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">SpongeBob</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Comedy</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Peppa Pig</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Comedy</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/5DUMPBSnHOZsbBv81GFXZXvDGr6.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Frozen 3</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Adventure</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/9dKCd55IuTT5QRs989m9Qlb7d2B.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Toy Story 5</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Adventure</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6 -->
+                    <div class="content-card relative rounded-lg overflow-hidden">
+                        <img src="https://image.tmdb.org/t/p/w500/6f9uCf7WQP1xU7UkJTxJOhz8iGs.jpg" alt="Kids Show" class="w-full h-auto">
+                        <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                            <h3 class="font-bold mb-1">Mickey Mouse</h3>
+                            <div class="flex items-center text-sm text-gray-300 mb-2">
+                                <span>2023</span>
+                                <span class="mx-2">•</span>
+                                <span>Comedy</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">StreamHub</h3>
+                    <p class="text-gray-400">The ultimate streaming platform for movies, TV shows, anime, and more. Watch anywhere, anytime.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Navigation</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Movies</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">TV Shows</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Anime</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Kids</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-red-400 transition">DMCA</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Subscribe</h4>
+                    <p class="text-gray-400 mb-4">Get the latest updates and offers.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="bg-gray-700 text-white px-4 py-2 rounded-l focus:outline-none focus:ring-2 focus:ring-red-500 w-full">
+                        <button class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-r transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 StreamHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // TMDB API Configuration
+        const API_KEY = '5205b8c031492a75039f7f449c72a948';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMobileMenu = document.getElementById('close-mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+        
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuButton) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Fetch data from TMDB API
+        async function fetchTrendingMovies() {
+            const response = await fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`);
+            const data = await response.json();
+            return data.results;
+        }
+
+        async function fetchPopularTVShows() {
+            const response = await fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}`);
+            const data = await response.json();
+            return data.results;
+        }
+
+        async function fetchTopAnime() {
+            const response = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&with_genres=16&sort_by=popularity.desc`);
+            const data = await response.json();
+            return data.results;
+        }
+
+        async function fetchKidsContent() {
+            const response = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&with_genres=10762&sort_by=popularity.desc`);
+            const data = await response.json();
+            return data.results;
+        }
+
+        async function fetchHeroContent() {
+            const response = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}`);
+            const data = await response.json();
+            return data.results[0];
+        }
+
+        // Generate content cards
+        function createContentCard(item, isTvShow = false) {
+            const title = isTvShow ? item.name : item.title;
+            const releaseDate = isTvShow ? item.first_air_date : item.release_date;
+            const year = releaseDate ? releaseDate.substring(0, 4) : 'N/A';
+            
+            return `
+                <div class="content-card relative rounded-lg overflow-hidden">
+                    <img src="${IMAGE_BASE_URL}${item.poster_path}" alt="${title}" class="w-full h-auto">
+                    <div class="card-overlay absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-4">
+                        <h3 class="font-bold mb-1">${title}</h3>
+                        <div class="flex items-center text-sm text-gray-300 mb-2">
+                            <span>${year}</span>
+                            <span class="mx-2">•</span>
+                            <span>${item.vote_average.toFixed(1)}/10</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Populate sections with data
+        async function populateSections() {
+            try {
+                // Hero section
+                const heroContent = await fetchHeroContent();
+                if (heroContent) {
+                    const heroSection = document.querySelector('.relative.h-screen');
+                    heroSection.querySelector('img').src = `${IMAGE_BASE_URL}${heroContent.backdrop_path}`;
+                    heroSection.querySelector('h1').textContent = heroContent.title || heroContent.name;
+                    heroSection.querySelector('p').textContent = heroContent.overview;
+                }
+
+                // Trending Movies
+                const trendingMovies = await fetchTrendingMovies();
+                const trendingContainer = document.querySelector('#trending-movies');
+                trendingContainer.innerHTML = trendingMovies.slice(0, 6).map(movie => 
+                    createContentCard(movie)
+                ).join('');
+
+                // Popular TV Shows
+                const popularTVShows = await fetchPopularTVShows();
+                const tvShowsContainer = document.querySelector('#popular-tv');
+                tvShowsContainer.innerHTML = popularTVShows.slice(0, 6).map(show => 
+                    createContentCard(show, true)
+                ).join('');
+
+                // Top Anime
+                const topAnime = await fetchTopAnime();
+                const animeContainer = document.querySelector('#top-anime');
+                animeContainer.innerHTML = topAnime.slice(0, 6).map(anime => 
+                    createContentCard(anime, true)
+                ).join('');
+
+                // Kids Content
+                const kidsContent = await fetchKidsContent();
+                const kidsContainer = document.querySelector('#kids-content');
+                kidsContainer.innerHTML = kidsContent.slice(0, 6).map(kidsShow => 
+                    createContentCard(kidsShow, true)
+                ).join('');
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSections();
+        });
+
+        // Content card hover effect (for touch devices)
+        const contentCards = document.querySelectorAll('.content-card');
+        contentCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // On mobile, clicking should show the overlay
+                if (window.innerWidth < 768) {
+                    const overlay = this.querySelector('.card-overlay');
+                    overlay.style.opacity = overlay.style.opacity === '1' ? '0' : '1';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
